@@ -437,6 +437,11 @@ body {
   transition: var(--transition);
 }
 
+.glass-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--card-shadow), 0 8px 24px -18px var(--accent-indigo);
+}
+
 /* Hero / Price Banner */
 .asset-banner {
   display: flex;
