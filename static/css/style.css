@@ -163,7 +163,7 @@ body {
   top: 0;
   z-index: 100;
   padding: 12px 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 18px -12px rgba(79, 70, 229, 0.24);
   transition: var(--transition);
 }
 
