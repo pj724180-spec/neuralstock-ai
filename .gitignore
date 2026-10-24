@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.Python
+.venv/
+venv/
+env/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Local application data
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# Tooling and operating system files
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db
+Desktop.ini

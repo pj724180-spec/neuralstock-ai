@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuralStock AI | Next-Gen AI Stock Predictor & Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- Chart.js for High Performance Canvas Financial Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="brand-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">NeuralStock AI</div>
+        </div>
+        <span class="brand-badge">ML ENSEMBLE v1.0</span>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-box-wrapper">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          id="tickerSearchInput" 
+          class="search-input" 
+          placeholder="Search ticker (e.g. NVDA, AAPL, TSLA, BTC-USD, RELIANCE.NS)..." 
+          autocomplete="off" 
+        />
+        <div id="searchDropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Live Status, Theme Switcher & Settings Quick Actions -->
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div id="marketStatusPill" style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); padding: 4px 10px; border-radius: 9999px;">
+          <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span>
+          <span id="marketStatusText">Market Live</span>
+        </div>
+
+        <!-- Quick Theme Toggle Segment -->
+        <div class="theme-switch-pill" id="themeSwitchPill" title="Quick Theme Switcher (Light / Dark)">
+          <button type="button" id="themeLightBtn" class="theme-pill-btn active" title="Switch to Light Professional Mode">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span>Light</span>
+          </button>
+          <button type="button" id="themeDarkBtn" class="theme-pill-btn" title="Switch to Dark Mode">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <span>Dark</span>
+          </button>
+        </div>
+
+        <!-- Settings Modal Trigger Button -->
+        <button id="openSettingsBtn" class="chip-btn settings-trigger-btn" title="Open Settings & Theme Options">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+
+        <!-- User Authentication & Profile Section -->
+        <div id="userAuthSection" class="user-auth-section">
+          <!-- Sign In Trigger Button (Shown when guest) -->
+          <button id="headerSignInBtn" class="chip-btn user-signin-btn" title="Sign in to your trading account">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Sign In</span>
+          </button>
+
+          <!-- Logged In Profile Pill (Shown when authenticated) -->
+          <div id="headerUserDropdownWrapper" class="user-dropdown-wrapper" style="display: none;">
+            <button id="userProfileBtn" class="user-profile-pill" title="View Account Profile">
+              <div class="user-avatar" id="headerUserAvatar">A</div>
+              <div class="user-meta-summary">
+                <span class="user-name" id="headerUserName">Admin</span>
+                <span class="user-role-badge" id="headerUserRole">PRO</span>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- Profile Dropdown Menu -->
+            <div id="userMenuDropdown" class="user-menu-dropdown">
+              <div class="user-dropdown-header">
+                <div class="dropdown-user-name" id="dropdownUserName">Account</div>
+                <div class="dropdown-user-email" id="dropdownUserEmail">Sign in to your account</div>
+                <div class="dropdown-user-badge" id="dropdownUserRole">Trader</div>
+              </div>
+              <div class="user-dropdown-divider"></div>
+              <button type="button" class="user-dropdown-item" id="menuOpenSettingsBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Preferences & Security</span>
+              </button>
+              <button type="button" class="user-dropdown-item danger" id="headerSignOutBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button id="runPredictionBtn" class="chip-btn active" style="padding: 7px 16px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Run AI Forecast
+        </button>
+        <button id="exportReportBtn" class="chip-btn" style="padding: 7px 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;" title="Export comprehensive intelligence report">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export Report
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick-Pick Ticker Chips Bar -->
+  <div class="sub-header-bar">
+    <div style="max-width: 1500px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <div class="quick-chips-bar" id="quickPicksBar">
+        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-right: 4px;">Popular:</span>
+        <button class="chip-btn active" data-symbol="NVDA">NVDA</button>
+        <button class="chip-btn" data-symbol="AAPL">AAPL</button>
+        <button class="chip-btn" data-symbol="TSLA">TSLA</button>
+        <button class="chip-btn" data-symbol="MSFT">MSFT</button>
+        <button class="chip-btn" data-symbol="GOOGL">GOOGL</button>
+        <button class="chip-btn" data-symbol="AMZN">AMZN</button>
+        <button class="chip-btn" data-symbol="BTC-USD">BTC-USD</button>
+        <button class="chip-btn" data-symbol="RELIANCE.NS">RELIANCE.NS</button>
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-dim);">
+        Models: <span style="color: var(--accent-indigo); font-weight: 600;">GradientBoost + RandomForest + Ridge</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Container -->
+  <main class="dashboard-container">
+    
+    <!-- Hero / Asset Summary Banner Card -->
+    <section class="glass-card asset-banner">
+      <div class="company-meta">
+        <div class="company-title-row">
+          <span id="assetSymbol" class="company-symbol-tag">NVDA</span>
+          <span id="assetName" class="company-name-full">NVIDIA Corporation</span>
+        </div>
+        <div class="company-tags">
+          <span id="assetSector" class="tag-pill">Technology</span>
+          <span id="assetExchange" class="tag-pill">NASDAQ</span>
+          <span id="assetMarketCap" class="tag-pill">Cap: $3.2T</span>
+          <span id="assetPE" class="tag-pill">P/E: 54.2</span>
+          <span id="assetBeta" class="tag-pill">Beta: 1.68</span>
+        </div>
+      </div>
+
+      <div class="price-display-wrapper">
+        <div style="display: flex; align-items: baseline; gap: 10px;">
+          <span id="currencySymbol" style="font-size: 1.4rem; color: var(--text-muted);">$</span>
+          <span id="assetPrice" class="price-main">0.00</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+          <div id="periodChangePill" class="price-change-pill positive">
+            <span id="periodChangeArrow">▲</span>
+            <span id="periodChangeValue">+0.00 (+0.00%)</span>
+            <span id="periodLabel" style="font-size: 0.75rem; opacity: 0.85;">Past Year</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; font-size: 0.78rem; color: var(--text-dim);">
+            <div id="priceChangePill" style="display: flex; align-items: center; gap: 4px;">
+              <span>Session:</span>
+              <span id="priceChangeValue" style="font-weight: 600; color: #10b981;">+0.00 (+0.00%)</span>
+            </div>
+            <span>&bull;</span>
+            <span id="periodRangeText">Range: $0.00 - $0.00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content 2-Column Grid -->
+    <div class="main-grid">
+
+      <!-- Left Column: Interactive Price & AI Forecast Chart + Tabs -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Chart Glass Card -->
+        <div class="glass-card" style="position: relative; min-height: 540px;">
+          
+          <!-- Loading Overlay -->
+          <div id="chartLoadingOverlay" class="loading-overlay active">
+            <div class="spinner"></div>
+            <div id="loadingStatusText" class="loading-text">Training AI Ensemble Models & Running Inference...</div>
+          </div>
+
+          <!-- Chart Controls Header -->
+          <div class="chart-card-header">
+            <div class="chart-title-group">
+              <span class="chart-title">Technical Chart & AI Forecast Cone</span>
+            </div>
+
+            <div class="chart-controls">
+              <!-- Forecast Horizon Slider -->
+              <div class="slider-container" title="Forecast days into the future">
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Horizon:</span>
+                <input type="range" id="horizonSlider" class="horizon-slider" min="3" max="30" value="14" />
+                <span id="horizonDaysLabel" style="font-size: 0.82rem; font-weight: 700; color: var(--accent-cyan); min-width: 32px;">14d</span>
+              </div>
+
+              <!-- Timeframe Selector -->
+              <div class="timeframe-group" id="timeframeButtons">
+                <button class="tf-btn" data-period="1mo">1M</button>
+                <button class="tf-btn" data-period="3mo">3M</button>
+                <button class="tf-btn" data-period="6mo">6M</button>
+                <button class="tf-btn active" data-period="1y">1Y</button>
+                <button class="tf-btn" data-period="2y">2Y</button>
+                <button class="tf-btn" data-period="5y">5Y</button>
+              </div>
+
+              <!-- Indicators Toggles -->
+              <div class="toggle-group">
+                <button id="toggleSmaBtn" class="toggle-btn active" title="Toggle 20/50 SMA lines">SMA</button>
+                <button id="toggleBbBtn" class="toggle-btn active" title="Toggle Bollinger Bands">BB</button>
+                <button id="toggleForecastBtn" class="toggle-btn active" title="Toggle AI Forecast Cone">AI Cone</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas Container -->
+          <div class="chart-canvas-container">
+            <canvas id="mainStockChart"></canvas>
+          </div>
+
+          <!-- Chart Legend Details -->
+          <div style="display: flex; gap: 16px; margin-top: 14px; font-size: 0.78rem; color: var(--text-dim); flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="width: 12px; height: 3px; background: #60a5fa; display: inline-block;"></span> Historical Price
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="width: 12px; height: 3px; background: #06b6d4; display: inline-block; border-top: 1px dashed;"></span> AI Forecast Path
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="width: 12px; height: 8px; background: rgba(6, 182, 212, 0.15); display: inline-block; border: 1px dashed #06b6d4;"></span> 95% Confidence Interval
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="width: 12px; height: 3px; background: #f59e0b; display: inline-block;"></span> SMA 20
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="width: 12px; height: 3px; background: #ec4899; display: inline-block;"></span> SMA 50
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytical Tabs: Backtest Diagnostics, Technical Matrix, Support/Resistance, News, Screener, Paper Trading, Alerts -->
+        <div class="glass-card">
+          <div class="tabs-header" style="overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px;">
+            <button class="tab-btn active" data-tab="tab-backtest">AI Diagnostics</button>
+            <button class="tab-btn" data-tab="tab-indicators">Technical Matrix</button>
+            <button class="tab-btn" data-tab="tab-levels">Support & Risk</button>
+            <button class="tab-btn" data-tab="tab-news">📰 Live News & Sentiment</button>
+            <button class="tab-btn" data-tab="tab-screener">🔥 Market Screener</button>
+            <button class="tab-btn" data-tab="tab-portfolio">💼 Paper Trading ($100k)</button>
+            <button class="tab-btn" data-tab="tab-alerts">🔔 Price Alerts</button>
+          </div>
+
+          <!-- Tab 1: AI Model Diagnostics -->
+          <div id="tab-backtest" class="tab-content active">
+            <!-- Model Performance Metrics Stats -->
+            <div class="metrics-row">
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Directional Accuracy</span>
+                <span id="metricAccuracy" class="metric-stat-val" style="color: #10b981;">0%</span>
+                <span class="metric-stat-sub">Predicted Up/Down moves</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Mean Absolute Error</span>
+                <span id="metricMae" class="metric-stat-val">$0.00</span>
+                <span class="metric-stat-sub">Average price deviation</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Root Mean Sq. Error</span>
+                <span id="metricRmse" class="metric-stat-val">$0.00</span>
+                <span class="metric-stat-sub">RMSE penalty on outliers</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Model R² Score</span>
+                <span id="metricR2" class="metric-stat-val">0.00</span>
+                <span class="metric-stat-sub">Explained return variance</span>
+              </div>
+            </div>
+
+            <!-- Diagnostics Details Grid: Feature Importances & Backtest Chart -->
+            <div class="diagnostics-grid">
+              <!-- Feature Importance Bars -->
+              <div>
+                <h4 style="font-size: 0.9rem; margin-bottom: 14px; color: var(--text-muted);">
+                  Top Predictive Drivers (Random Forest / GBDT)
+                </h4>
+                <div id="featureImportanceList">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+
+              <!-- Historical Backtest Mini Chart -->
+              <div>
+                <h4 style="font-size: 0.9rem; margin-bottom: 14px; color: var(--text-muted);">
+                  Hold-Out Backtest (Actual vs Model Predicted)
+                </h4>
+                <div style="height: 220px; position: relative;">
+                  <canvas id="backtestChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Technical Indicators Matrix -->
+          <div id="tab-indicators" class="tab-content" style="display: none;">
+            <div class="tech-indicators-grid" id="techIndicatorsGrid">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <!-- Tab 3: Support, Resistance & Risk -->
+          <div id="tab-levels" class="tab-content" style="display: none;">
+            <div class="tech-indicators-grid" id="riskLevelsGrid">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <!-- Tab 4: Live News & Sentiment Analysis -->
+          <div id="tab-news" class="tab-content" style="display: none;">
+            <div class="tab-panel-banner" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+              <div>
+                <div style="font-size: 0.74rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">News Sentiment Index</div>
+                <div id="newsOverallLabel" style="font-size: 1.25rem; font-weight: 800; color: #10b981; margin-top: 2px;">Bullish Sentiment</div>
+              </div>
+              <div style="display: flex; gap: 20px; font-size: 0.88rem;">
+                <div><span style="color: #10b981; font-weight: 800;" id="newsBullishPct">0%</span> Bullish</div>
+                <div><span style="color: #f59e0b; font-weight: 800;" id="newsNeutralPct">0%</span> Neutral</div>
+                <div><span style="color: #ef4444; font-weight: 800;" id="newsBearishPct">0%</span> Bearish</div>
+              </div>
+            </div>
+            <div id="newsArticlesList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <!-- Tab 5: AI Market Screener -->
+          <div id="tab-screener" class="tab-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-main);">AI Multi-Asset Market Screener</h4>
+                <p style="font-size: 0.8rem; color: var(--text-dim);">Live quant screening across tech giants, crypto, and global leaders</p>
+              </div>
+              <button id="refreshScreenerBtn" class="chip-btn" style="padding: 5px 12px; font-size: 0.78rem;">🔄 Refresh Scan</button>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="screener-table">
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Price</th>
+                    <th>24h Move</th>
+                    <th>AI Signal</th>
+                    <th>Sentiment</th>
+                    <th>RSI (14)</th>
+                    <th>14d Projected</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="screenerTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 6: Paper Trading Simulator ($100k Virtual Balance) -->
+          <div id="tab-portfolio" class="tab-content" style="display: none;">
+            <div class="metrics-row" style="margin-bottom: 20px;">
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Virtual Net Worth</span>
+                <span id="portfolioNetWorth" class="metric-stat-val" style="color: #38bdf8;">$100,000.00</span>
+                <span class="metric-stat-sub">Cash + Position Value</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Available Cash</span>
+                <span id="portfolioCash" class="metric-stat-val">$100,000.00</span>
+                <span class="metric-stat-sub">Available to trade</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Total Unrealized P&L</span>
+                <span id="portfolioPnl" class="metric-stat-val" style="color: #10b981;">+$0.00</span>
+                <span id="portfolioPnlPct" class="metric-stat-sub">(+0.00%)</span>
+              </div>
+              <div class="metric-stat-card">
+                <span class="metric-stat-label">Open Positions</span>
+                <span id="portfolioPositionsCount" class="metric-stat-val">0</span>
+                <span class="metric-stat-sub">Active holdings</span>
+              </div>
+            </div>
+
+            <!-- Trade Execution Box -->
+            <div class="tab-panel-banner">
+              <div style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Execute Virtual Trade on <strong id="tradeSymbolTitle" style="color: var(--accent-cyan);">NVDA</strong></span>
+                <span style="font-size: 0.8rem; color: var(--text-dim);">Live Price: <span id="tradeLivePrice" style="color: var(--text-main); font-weight: 700;">$0.00</span></span>
+              </div>
+              <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.82rem; color: var(--text-muted);">Quantity:</span>
+                  <input type="number" id="tradeSharesInput" min="1" max="10000" value="10" class="search-input" style="width: 100px; padding: 6px 12px;" />
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-dim);">
+                  Est. Total: <strong id="tradeEstimatedCost" style="color: var(--text-main);">$0.00</strong>
+                </div>
+                <div style="display: flex; gap: 8px; margin-left: auto;">
+                  <button id="buySharesBtn" class="chip-btn active" style="background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981; font-weight: 700; padding: 7px 20px;">
+                    BUY
+                  </button>
+                  <button id="sellSharesBtn" class="chip-btn" style="background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; font-weight: 700; padding: 7px 20px;">
+                    SELL
+                  </button>
+                  <button id="resetPortfolioBtn" class="chip-btn" style="padding: 7px 14px; color: var(--text-dim);" title="Reset to $100k cash">
+                    Reset Portfolio
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Holdings Table -->
+            <div style="overflow-x: auto;">
+              <table class="screener-table">
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Shares</th>
+                    <th>Avg Buy Price</th>
+                    <th>Current Price</th>
+                    <th>Total Value</th>
+                    <th>Unrealized P&L</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="portfolioHoldingsBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 7: Price Alerts -->
+          <div id="tab-alerts" class="tab-content" style="display: none;">
+            <div class="tab-panel-banner">
+              <div style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">Create Price Alert for <strong id="alertSymbolTitle" style="color: var(--accent-cyan);">NVDA</strong></div>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                <select id="alertConditionSelect" class="search-input" style="width: 170px; padding: 8px 12px;">
+                  <option value="above">Price Rises Above (&ge;)</option>
+                  <option value="below">Price Drops Below (&le;)</option>
+                </select>
+                <input type="number" id="alertTargetPriceInput" step="0.01" placeholder="Target price ($)" class="search-input" style="width: 140px; padding: 8px 12px;" />
+                <button id="createAlertBtn" class="chip-btn active" style="padding: 8px 18px;">+ Set Alert</button>
+              </div>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="screener-table">
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Condition</th>
+                    <th>Trigger Price</th>
+                    <th>Current Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="alertsTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Right Column: AI Recommendation, Sentiments & Targets -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- AI Intelligence & Rating Card -->
+        <div class="glass-card ai-intel-card">
+          <div class="intel-section-title">
+            <span>AI Consensus Rating</span>
+            <span style="font-size: 0.72rem; color: var(--accent-cyan);">MULTI-SIGNAL</span>
+          </div>
+
+          <!-- Recommendation Badge -->
+          <div class="rating-badge-container">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Algorithm Signal</div>
+              <div id="recommendationBadge" class="rating-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;">
+                BUY
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Sentiment</div>
+              <div id="sentimentLabel" style="font-size: 1.15rem; font-weight: 700; color: #10b981;">Bullish</div>
+            </div>
+          </div>
+
+          <!-- Sentiment Meter -->
+          <div class="sentiment-bar-wrapper">
+            <div class="sentiment-labels">
+              <span style="color: var(--red-glow);">Bearish</span>
+              <span id="sentimentScorePercent" style="color: var(--text-main); font-weight: 700;">68% Bullish</span>
+              <span style="color: var(--green-glow);">Bullish</span>
+            </div>
+            <div class="sentiment-track">
+              <div id="sentimentFillBar" class="sentiment-fill" style="width: 68%;"></div>
+            </div>
+          </div>
+
+          <!-- AI Predicted Target Prices -->
+          <div>
+            <div class="intel-section-title" style="margin-bottom: 10px;">
+              <span>AI Target Projections</span>
+            </div>
+            <div class="target-prices-grid">
+              <div class="target-item-box">
+                <div class="target-label">Next Day</div>
+                <div id="target1dPrice" class="target-price">$0.00</div>
+                <div id="target1dChange" class="target-change" style="color: var(--green-glow);">+0.0%</div>
+              </div>
+              <div class="target-item-box">
+                <div class="target-label">7-Day Target</div>
+                <div id="target7dPrice" class="target-price">$0.00</div>
+                <div id="target7dChange" class="target-change" style="color: var(--green-glow);">+0.0%</div>
+              </div>
+              <div class="target-item-box">
+                <div class="target-label">30-Day Target</div>
+                <div id="target30dPrice" class="target-price">$0.00</div>
+                <div id="target30dChange" class="target-change" style="color: var(--green-glow);">+0.0%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Risk Limits -->
+          <div class="risk-limits-box">
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">Stop-Loss Level</div>
+              <div id="suggestedStopLoss" style="font-size: 1.05rem; font-weight: 700; color: var(--red-glow);">$0.00</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">Take-Profit Target</div>
+              <div id="suggestedTakeProfit" style="font-size: 1.05rem; font-weight: 700; color: var(--green-glow);">$0.00</div>
+            </div>
+          </div>
+
+          <!-- AI Insights Reasoning -->
+          <div>
+            <div class="intel-section-title" style="margin-bottom: 10px;">
+              <span>AI Model Rationales</span>
+            </div>
+            <div id="aiKeyInsightsList" class="insights-list">
+              <!-- Injected via JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Watchlist & Saved Tickers Card -->
+        <div class="glass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <span style="font-size: 0.95rem; font-weight: 700;">My Watchlist</span>
+            <button id="addWatchlistBtn" class="chip-btn" style="padding: 3px 10px; font-size: 0.75rem;">+ Add Current</button>
+          </div>
+          <div id="watchlistContainer" class="watchlist-bar">
+            <!-- Dynamic Watchlist items -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Floating Live AI Copilot Launcher Button -->
+  <button id="chatbotLauncherBtn" class="chatbot-launcher-btn" title="Open AI Financial Copilot">
+    <div class="pulse-dot"></div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <span>AI Copilot</span>
+  </button>
+
+  <!-- Live AI Chatbot Floating Window -->
+  <div id="chatbotWindow" class="chatbot-window">
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="bot-avatar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div>
+          <div class="chatbot-title">NeuralStock Copilot</div>
+          <div class="chatbot-status-sub">
+            <span class="pulse-dot" style="width: 6px; height: 6px;"></span>
+            <span id="chatActiveSymbolStatus">Tracking NVDA &middot; Live Context</span>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button id="chatVoiceToggleBtn" class="header-action-btn" title="Toggle audio speech narration">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+        <button id="chatClearBtn" class="header-action-btn" title="Clear chat history">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+        <button id="chatCloseBtn" class="header-action-btn" title="Minimize chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Context Strip -->
+    <div class="chatbot-context-bar">
+      <div class="context-tag">
+        <span>⚡ Live Asset:</span>
+        <strong id="chatContextTicker">NVDA</strong>
+      </div>
+      <div style="color: var(--text-muted);" id="chatContextQuote">$0.00 &middot; HOLD</div>
+    </div>
+
+    <!-- Prompt Suggestion Chips -->
+    <div class="chatbot-prompt-chips" id="chatSuggestionChips">
+      <button class="chat-chip" data-prompt="Should I buy right now?">🎯 Should I buy?</button>
+      <button class="chat-chip" data-prompt="What is the 14-day price target?">📈 14-Day Target</button>
+      <button class="chat-chip" data-prompt="Where should I place my stop loss?">🛡️ Suggested Stop Loss</button>
+      <button class="chat-chip" data-prompt="Explain what the RSI and MACD indicate">📊 RSI & MACD</button>
+      <button class="chat-chip" data-prompt="Compare this stock with TSLA">⚖️ Compare vs TSLA</button>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="chatMessagesList" class="chatbot-messages">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Input Bar -->
+    <form id="chatInputForm" class="chatbot-input-bar">
+      <input 
+        type="text" 
+        id="chatMessageInput" 
+        class="chat-input" 
+        placeholder="Ask about NVDA, price targets, risk, or compare..." 
+        autocomplete="off" 
+      />
+      <button type="button" id="chatMicBtn" class="chat-mic-btn" title="Voice Input (Click to speak)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="8" y1="23" x2="16" y2="23"></line>
+        </svg>
+      </button>
+      <button type="submit" id="chatSendBtn" class="chat-send-btn" title="Send Message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- Settings & Preferences Modal Dialog -->
+  <div id="settingsModal" class="settings-modal-overlay">
+    <div class="settings-modal-dialog">
+      <div class="settings-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="settings-header-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">Settings & Customization</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim);">Personalize visual theme and trading assistant behavior</div>
+          </div>
+        </div>
+        <button id="closeSettingsModalBtn" class="header-action-btn" title="Close Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="settings-modal-body">
+        
+        <!-- Setting Group 1: Appearance Theme -->
+        <div class="setting-item-block">
+          <div class="setting-item-header">
+            <div>
+              <div class="setting-label">Display Theme</div>
+              <div class="setting-subtext">Toggle between light fintech and dark cyberpunk modes</div>
+            </div>
+          </div>
+          <div class="theme-choice-grid">
+            <label class="theme-choice-card" id="themeOptionLight">
+              <input type="radio" name="appThemeRadio" value="light" checked />
+              <div class="theme-preview-box light-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-line"></div>
+                  <div class="preview-chart"></div>
+                </div>
+              </div>
+              <div class="theme-choice-info">
+                <span class="theme-choice-name">☀️ Light Professional</span>
+                <span class="theme-choice-desc">Crisp white & slate fintech aesthetic</span>
+              </div>
+            </label>
+            <label class="theme-choice-card" id="themeOptionDark">
+              <input type="radio" name="appThemeRadio" value="dark" />
+              <div class="theme-preview-box dark-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-line"></div>
+                  <div class="preview-chart"></div>
+                </div>
+              </div>
+              <div class="theme-choice-info">
+                <span class="theme-choice-name">🌙 Dark Cyberpunk</span>
+                <span class="theme-choice-desc">High-contrast neon glassmorphic trading</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting Group 2: Chart Default Horizon -->
+        <div class="setting-item-block">
+          <div class="setting-item-header">
+            <div>
+              <div class="setting-label">Default AI Forecast Horizon</div>
+              <div class="setting-subtext">Select how many days forward the ensemble model predicts</div>
+            </div>
+            <select id="settingDefaultHorizon" class="search-input" style="width: 140px; padding: 7px 10px;">
+              <option value="7">7 Days</option>
+              <option value="14" selected>14 Days (Default)</option>
+              <option value="30">30 Days</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Setting Group 3: Voice Speech Narration -->
+        <div class="setting-item-block">
+          <div class="setting-item-header">
+            <div>
+              <div class="setting-label">AI Voice Narration</div>
+              <div class="setting-subtext">Read aloud AI responses using browser text-to-speech</div>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" id="settingVoiceNarration" />
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting Group 4: Reset Local Storage -->
+        <div class="setting-item-block" style="border-bottom: none;">
+          <div class="setting-item-header">
+            <div>
+              <div class="setting-label">Reset Virtual Portfolio & Alerts</div>
+              <div class="setting-subtext">Reset simulated trading to initial $100k cash and default alerts</div>
+            </div>
+            <button id="settingResetStorageBtn" class="chip-btn" style="color: var(--red-glow); border-color: rgba(239, 68, 68, 0.4); font-weight: 600;">
+              Reset Data
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="settings-modal-footer">
+        <button id="saveSettingsBtn" class="chip-btn active" style="padding: 8px 24px; font-weight: 700;">
+          Save & Apply
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security & Authentication Modal Dialog -->
+  <div id="authModal" class="settings-modal-overlay">
+    <div class="settings-modal-dialog auth-modal-dialog">
+      
+      <!-- Modal Header -->
+      <div class="settings-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="settings-header-icon" style="background: rgba(79, 70, 229, 0.12); color: var(--accent-indigo);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);" id="authModalTitle">Trader Authentication</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim);">Secure access with PBKDF2 cryptographic protection</div>
+          </div>
+        </div>
+        <button id="closeAuthModalBtn" class="header-action-btn" title="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Auth Tabs Nav -->
+      <div class="auth-tabs-nav">
+        <button type="button" class="auth-tab-btn active" id="authTabSignInBtn">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="authTabSignUpBtn">Create Account</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="settings-modal-body" style="gap: 16px;">
+        
+        <!-- Status / Error Alert Banner -->
+        <div id="authStatusBanner" class="auth-status-banner" style="display: none;"></div>
+
+        <!-- 1. SIGN IN FORM -->
+        <form id="signInForm" class="auth-form-panel">
+          
+          <div class="auth-input-group">
+            <label class="auth-field-label" for="loginUsername">Username or Email</label>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input type="text" id="loginUsername" class="search-input auth-field-input" placeholder="e.g. admin or trader" required autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="auth-field-label" for="loginPassword">Password</label>
+            </div>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input type="password" id="loginPassword" class="search-input auth-field-input" placeholder="Enter your password" required autocomplete="current-password" />
+              <button type="button" class="auth-pw-toggle" id="toggleLoginPwBtn" title="Show/Hide Password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="submitLoginBtn" class="chip-btn active auth-submit-btn">
+            Sign In to Dashboard
+          </button>
+
+          <div style="text-align: center; font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">
+            Don't have an account? <a href="#" id="switchToSignUpLink" style="color: var(--accent-indigo); font-weight: 600; text-decoration: none;">Create one free</a>
+          </div>
+        </form>
+
+        <!-- 2. CREATE ACCOUNT FORM -->
+        <form id="signUpForm" class="auth-form-panel" style="display: none;">
+          <div class="auth-input-group">
+            <label class="auth-field-label" for="regFullName">Full Name</label>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input type="text" id="regFullName" class="search-input auth-field-input" placeholder="e.g. Rohan Verma" required />
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label class="auth-field-label" for="regUsername">Choose Username</label>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="4"></circle>
+              </svg>
+              <input type="text" id="regUsername" class="search-input auth-field-input" placeholder="3-30 letters or numbers" required autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label class="auth-field-label" for="regEmail">Email Address (Optional)</label>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input type="email" id="regEmail" class="search-input auth-field-input" placeholder="trader@domain.com" />
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label class="auth-field-label" for="regPassword">Password (Min. 6 characters)</label>
+            <div class="auth-input-wrapper">
+              <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input type="password" id="regPassword" class="search-input auth-field-input" placeholder="Create strong password" required autocomplete="new-password" />
+              <button type="button" class="auth-pw-toggle" id="toggleRegPwBtn" title="Show/Hide Password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <!-- Live Password Strength Meter -->
+            <div class="pw-strength-container" id="pwStrengthContainer">
+              <div class="pw-strength-bar">
+                <div class="pw-strength-fill" id="pwStrengthFill"></div>
+              </div>
+              <span class="pw-strength-text" id="pwStrengthText">Strength: Enter password</span>
+            </div>
+          </div>
+
+          <button type="submit" id="submitRegisterBtn" class="chip-btn active auth-submit-btn">
+            Create Account & Sign In
+          </button>
+
+          <div style="text-align: center; font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">
+            Already have an account? <a href="#" id="switchToSignInLink" style="color: var(--accent-indigo); font-weight: 600; text-decoration: none;">Sign In</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="toast"></div>
+
+  <!-- Client JavaScript -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
